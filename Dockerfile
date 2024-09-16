@@ -12,11 +12,11 @@ ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Copiar os arquivos do projeto para o diretório do contêiner
+# Copiar os arquivos do projeto
 COPY . /app
 
-# Baixar os arquivos de anotações (dbSNP e gnomAD) manualmente antes de executar
-# Você pode adicionar o download direto se necessário, mas por enquanto esses arquivos são esperados no diretório.
+# Baixar o arquivo dbSNP usando o script
+RUN chmod +x download_dbsnp.sh && ./download_dbsnp.sh
 
 # Rodar o Snakemake para gerar o arquivo VCF anotado
 RUN snakemake
