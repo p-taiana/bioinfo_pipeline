@@ -12,8 +12,14 @@ ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Copiar os arquivos do projeto
+# Copiar os arquivos do projeto para o contêiner
 COPY . /app
+
+# Rodar o Snakemake para gerar o arquivo VCF anotado
+RUN snakemake
+
+# Expor a porta 5000 para a API Flask
+EXPOSE 5000
 
 # Comando padrão para rodar o Flask
 CMD ["python", "app.py"]
