@@ -50,7 +50,7 @@
             const dp = document.getElementById('dp').value;
             
             // Fazendo a requisição para o backend na API
-            fetch(/api/variants?freq=${freq}&dp=${dp})
+            fetch(`/api/variants?freq=${freq}&dp=${dp}`)
                 .then(response => response.json())
                 .then(data => {
                     // Limpando a tabela
@@ -61,9 +61,8 @@
                     data.forEach(variant => {
                         const row = document.createElement('tr');
                         row.innerHTML = 
-                            <td>${variant.variant}</td>
-                            <td>${variant.info}</td>
-                        ;
+                            `<td>${variant.variant}</td>
+                            <td>${variant.info}</td>`;
                         tableBody.appendChild(row);
                     });
                 })
