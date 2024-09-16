@@ -3,8 +3,8 @@ FROM continuumio/miniconda3
 # Instalar mamba para otimizar a instalação do Conda
 RUN conda install -n base -c conda-forge mamba
 
-# Criar ambiente Conda e instalar Snakemake, SnpEff, SnpSift, Flask, Pandas, e Plotly
-RUN mamba create -n bioinfo-env -c bioconda -c conda-forge snakemake snpeff snpsift flask pandas plotly
+# Criar ambiente Conda e instalar Snakemake, SnpEff, Flask, Pandas, e Plotly
+RUN mamba create -n bioinfo-env -c bioconda -c conda-forge snakemake snpeff flask pandas plotly
 
 # Ativar o ambiente Conda
 ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
@@ -14,10 +14,6 @@ WORKDIR /app
 
 # Copiar os arquivos do projeto
 COPY . /app
-
-# Baixar o arquivo dbSNP.vcf.gz correto para GRCh37
-RUN wget https://ftp.ncbi.nlm.nih.gov/snp/latest_release/VCF/GCF_000001405.25.bgz -O /app/dbSNP.vcf.gz && \
-    gunzip /app/dbSNP.vcf.gz
 
 # Rodar o Snakemake para gerar o arquivo VCF anotado
 RUN snakemake
