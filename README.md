@@ -60,7 +60,7 @@ docker build -t bioinfo_pipeline .
 docker run -p 5000:5000 bioinfo_pipeline
 
 4. Abra seu navegador e acesse:
-http://localhost:5000](http://127.0.0.1:5000/variants#
+http://127.0.0.1:5000/variants#
 
 
 Como Usar
