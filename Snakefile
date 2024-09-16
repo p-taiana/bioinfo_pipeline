@@ -2,6 +2,15 @@ rule all:
     input:
         "variants_with_impact.vcf"
 
+rule download_dbsnp:
+    output:
+        "dbSNP.vcf"
+    shell:
+        """
+        wget ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b142_GRCh37p13/VCF/00-All.vcf.gz -O dbSNP.vcf.gz
+        gunzip dbSNP.vcf.gz
+        """
+
 rule annotate_variants:
     input:
         "input_variants.vcf"
@@ -18,11 +27,11 @@ rule annotate_variants:
 
 rule snpsift_annotate:
     input:
-        "annotated_variants.vcf"
+        "annotated_variants.vcf", "dbSNP.vcf"
     output:
         "variants_with_impact.vcf"
     shell:
         """
         # Usa SnpSift para adicionar dados de impacto e anotar com dbSNP
-        SnpSift annotate dbSNP.vcf {input} > {output}
+        SnpSift annotate {input[1]} {input[0]} > {output}
         """
