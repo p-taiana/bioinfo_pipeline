@@ -18,7 +18,7 @@ def filter_variants(variants, freq_threshold, dp_threshold):
         if variant.startswith("#"):
             continue
 
-        match_freq = re.search(r'AF=([\d\.]+)', variant)
+        match_freq = re.search(r'AF=([\d\.]+)', variant)  # Ajuste conforme o formato de frequência no VCF
         match_dp = re.search(r'DP=(\d+)', variant)
 
         if match_freq and match_dp:
@@ -27,7 +27,7 @@ def filter_variants(variants, freq_threshold, dp_threshold):
 
             if freq >= freq_threshold and dp >= dp_threshold:
                 variant_info = {
-                    "variant": variant.split("\t")[1],
+                    "variant": variant.split("\t")[1],  # Posição da variante
                     "info": variant.strip()
                 }
                 filtered_variants.append(variant_info)
@@ -36,8 +36,7 @@ def filter_variants(variants, freq_threshold, dp_threshold):
 
 @app.route('/api/variants', methods=['GET'])
 def get_variants():
-    # Ajustar para o arquivo anotado correto
-    vcf_file = './annotated_variants.vcf'
+    vcf_file = './variants_with_frequencies.vcf'
     try:
         freq_threshold = float(request.args.get('freq', 0.0))
         dp_threshold = int(request.args.get('dp', 0))
