@@ -15,8 +15,8 @@ WORKDIR /app
 # Copiar os arquivos do projeto
 COPY . /app
 
-# Baixar o arquivo dbSNP.vcf (por exemplo, para GRCh37)
-RUN wget ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b142_GRCh37p13/VCF/00-All.vcf.gz -O /app/dbSNP.vcf.gz && \
+# Baixar o arquivo dbSNP.vcf.gz correto para GRCh37
+RUN wget https://ftp.ncbi.nlm.nih.gov/snp/latest_release/VCF/GCF_000001405.25.bgz -O /app/dbSNP.vcf.gz && \
     gunzip /app/dbSNP.vcf.gz
 
 # Rodar o Snakemake para gerar o arquivo VCF anotado
