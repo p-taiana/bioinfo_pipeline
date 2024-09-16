@@ -31,21 +31,17 @@ Pip (para instalação de pacotes Python)
 
 1. Rodando localmente
 Clone o repositório:
-bash
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
 cd bioinfo_pipeline
 
 2. Crie um ambiente virtual (opcional, mas recomendado):
-bash
 python3 -m venv venv
 source venv/bin/activate  # No Windows: venv\Scripts\activate
 
 3. Instale as dependências:
-bash
 pip install -r requirements.txt
 
 4. Execute a aplicação Flask:
-bash
 python app.py
 
 5. Abra seu navegador e acesse:
@@ -54,20 +50,18 @@ http://localhost:5000
 Rodando com Docker
 
 1. Clone o repositório:
-bash
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
 cd bioinfo_pipeline
 
 2. Construa a imagem Docker:
-bash
 docker build -t bioinfo_pipeline .
 
 3. Rode o contêiner:
-bash
 docker run -p 5000:5000 bioinfo_pipeline
 
 4. Abra seu navegador e acesse:
-http://localhost:5000
+http://localhost:5000](http://127.0.0.1:5000/variants#
+
 
 Como Usar
 1. Carregue o arquivo VCF: O sistema processa automaticamente arquivos VCF carregados.
