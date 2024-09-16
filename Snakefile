@@ -1,17 +1,25 @@
 rule all:
     input:
-        "annotated_variants.vcf"
+        "variants_with_frequencies.vcf"
 
-rule annotate_variants:
+rule annotate_dbsnp:
     input:
         "input_variants.vcf"
     output:
-        "annotated_variants.vcf"
+        "variants_with_dbsnp.vcf"
     shell:
         """
-        # Cria o diretório de saída com permissões adequadas
-        mkdir -p /tmp/snpEff_output
-        
-        # Executa o SnpEff e direciona todos os arquivos de saída para o diretório /tmp/snpEff_output
-        snpEff -Xmx4g ann -v GRCh37.75 {input} -csvStats /tmp/snpEff_output/snpEff_summary.csv > {output}
+        # Anotação com o dbSNP ID
+        SnpSift annotate dbSNP.vcf {input} > {output}
+        """
+
+rule annotate_gnomad:
+    input:
+        "variants_with_dbsnp.vcf"
+    output:
+        "variants_with_frequencies.vcf"
+    shell:
+        """
+        # Anotação com a frequência populacional do gnomAD
+        SnpSift annotate gnomAD.vcf {input} > {output}
         """
