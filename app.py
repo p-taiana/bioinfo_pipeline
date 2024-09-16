@@ -36,7 +36,8 @@ def filter_variants(variants, freq_threshold, dp_threshold):
 
 @app.route('/api/variants', methods=['GET'])
 def get_variants():
-    vcf_file = './annotated_variants.vcf'
+    # Ajuste o caminho para o arquivo VCF anotado corretamente
+    vcf_file = './variants_with_impact.vcf'
     try:
         freq_threshold = float(request.args.get('freq', 0.0))
         dp_threshold = int(request.args.get('dp', 0))
@@ -52,4 +53,4 @@ def get_variants():
 
 if __name__ == "__main__":
     # Utilize variáveis de ambiente para definir host e debug
-    app.run(host='0.0.0.0', debug=os.getenv('FLASK_DEBUG', 'false').lower() in ['true', '1'])
+    app.run(host='0.0.0.0', port=5000, debug=os.getenv('FLASK_DEBUG', 'false').lower() in ['true', '1'])
