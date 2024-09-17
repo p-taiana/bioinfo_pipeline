@@ -12,11 +12,11 @@ ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Copiar os arquivos do projeto
+# Copiar os arquivos do projeto, incluindo o dbSNP.vcf
 COPY . /app
 
-# Baixar o arquivo dbSNP usando o script
-RUN chmod +x download_dbsnp.sh && ./download_dbsnp.sh
+# Certificar-se de que o dbSNP já está disponível na pasta
+RUN ls -la /app/dbSNP.vcf
 
 # Rodar o Snakemake para gerar o arquivo VCF anotado
 RUN snakemake
