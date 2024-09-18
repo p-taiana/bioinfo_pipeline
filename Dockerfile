@@ -10,7 +10,7 @@ RUN mamba create -n bioinfo-env -c bioconda -c conda-forge snakemake snpeff snps
 # Ativar o ambiente Conda
 ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
 
-# Instalar Perl (necessário para VEP) e dependências do VEP
+# Instalar Perl e suas dependências, incluindo DBI via apt
 RUN apt-get update && apt-get install -y \
     perl \
     build-essential \
@@ -22,13 +22,12 @@ RUN apt-get update && apt-get install -y \
     cpanminus \
     make \
     libssl-dev \
-    libexpat1-dev
+    libexpat1-dev \
+    libdbd-sqlite3-perl \
+    libxml-simple-perl
 
-# Instalar o DBI com CPAN e garantir que a instalação seja completa
-RUN cpan App::cpanminus && cpanm --force DBI
-
-# Instalar outros módulos Perl que podem ser necessários para o VEP
-RUN cpanm --force DBD::mysql Archive::Zip
+# Instalar DBI e outros módulos Perl que podem ser necessários para o VEP via cpanminus
+RUN cpanm --notest DBD::SQLite Archive::Zip
 
 # Baixar e instalar o VEP
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
