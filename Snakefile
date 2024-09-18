@@ -1,6 +1,6 @@
 rule all:
     input:
-        "variants_with_frequencies.vcf"
+        "variants_with_dbsnp.vcf"
 
 rule annotate_dbsnp:
     input:
@@ -9,17 +9,6 @@ rule annotate_dbsnp:
         "variants_with_dbsnp.vcf"
     shell:
         """
-        # Anotação com o dbSNP ID
-        SnpSift annotate dbSNP.vcf {input} > {output}
-        """
-
-rule annotate_gnomad:
-    input:
-        "variants_with_dbsnp.vcf"
-    output:
-        "variants_with_frequencies.vcf"
-    shell:
-        """
-        # Anotação com a frequência populacional do gnomAD
-        SnpSift annotate gnomAD.vcf {input} > {output}
+        # Usar o VEP para anotar com dbSNP IDs
+        vep --input_file {input} --output_file {output} --everything --vcf --offline
         """
