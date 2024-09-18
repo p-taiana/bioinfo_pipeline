@@ -21,12 +21,17 @@
             <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
         </form>
 
-        <!-- Local para os gráficos -->
-        <div class="mt-4">
-            <h3>Gráficos de Contagem</h3>
-            <img id="af-graph" src="" alt="Gráfico de Contagem AF">
-            <img id="dp-graph" src="" alt="Gráfico de Contagem DP">
-        </div>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>Variant Position</th>
+                    <th>Variant Info</th>
+                </tr>
+            </thead>
+            <tbody id="variant-table-body">
+                <!-- Os dados das variantes filtradas aparecerão aqui -->
+            </tbody>
+        </table>
     </div>
 
     <script>
@@ -39,10 +44,18 @@
             fetch(`/api/variants?af=${af}&dp=${dp}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('af-graph').src = data.af_plot;
-                    document.getElementById('dp-graph').src = data.dp_plot;
+                    const tableBody = document.getElementById('variant-table-body');
+                    tableBody.innerHTML = '';
+
+                    data.forEach(variant => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = 
+                            `<td>${variant.variant}</td>
+                             <td>${variant.info}</td>`;
+                        tableBody.appendChild(row);
+                    });
                 })
-                .catch(error => console.error('Erro ao buscar dados:', error));
+                .catch(error => console.error('Error fetching data:', error));
         });
     </script>
 </body>
