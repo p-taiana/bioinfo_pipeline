@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 
 def filter_variants(variants, af_threshold, dp_threshold):
-    af_count = 0
-    dp_count = 0
+    filtered_variants = []
     for variant in variants:
         if variant.startswith("#"):
             continue
@@ -17,15 +16,16 @@ def filter_variants(variants, af_threshold, dp_threshold):
         if match_af and match_dp:
             af = float(match_af.group(1))
             dp = int(match_dp.group(1))
-            if af >= af_threshold:
-                af_count += 1
-            if dp >= dp_threshold:
-                dp_count += 1
+            if af >= af_threshold and dp >= dp_threshold:
+                filtered_variants.append({
+                    "variant": variant.split('\t')[1],  # Assume que a posição da variante está na segunda coluna
+                    "info": variant
+                })
 
-    return af_count, dp_count
+    return filtered_variants
 
 @app.route('/api/variants', methods=['GET'])
-def api_filter():
+def filter_and_plot():
     af_threshold = float(request.args.get('af', 0.0))
     dp_threshold = int(request.args.get('dp', 0))
 
@@ -33,22 +33,11 @@ def api_filter():
         with open('annotated_variants.vcf', 'r') as file:
             variants = file.readlines()
 
-        af_count, dp_count = filter_variants(variants, af_threshold, dp_threshold)
+        filtered_variants = filter_variants(variants, af_threshold, dp_threshold)
 
-        # Generate simple bar charts
-        plt.figure()
-        plt.bar(['AF'], [af_count], color='blue')
-        plt.title('Variantes por AF')
-        plt.savefig('static/af_count.png')
-        plt.close()
+        # Assume que você tem funções para gerar gráficos, se necessário
 
-        plt.figure()
-        plt.bar(['DP'], [dp_count], color='red')
-        plt.title('Variantes por DP')
-        plt.savefig('static/dp_count.png')
-        plt.close()
-
-        return jsonify({"af_plot": url_for('static', filename='af_count.png'), "dp_plot": url_for('static', filename='dp_count.png')})
+        return jsonify(filtered_variants)
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
