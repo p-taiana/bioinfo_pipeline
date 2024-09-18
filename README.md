@@ -16,11 +16,9 @@ Python >3.x
 Docker (se preferir rodar o projeto em contêiner)
 Pip (para instalação de pacotes Python)
 
-1. Rodando localmente
-Clone o repositório:
-
+_Rodando localmente
+1. Clone o repositório:
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
-
 cd bioinfo_pipeline
 
 2. Crie um ambiente virtual (opcional, mas recomendado):
@@ -36,8 +34,7 @@ python app.py
 7. Abra seu navegador e acesse:
 http://127.0.0.1:5000/variants#
 
-Rodando com Docker
-
+_Rodando com Docker
 1. Clone o repositório:
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
 cd bioinfo_pipeline
