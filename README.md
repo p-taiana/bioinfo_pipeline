@@ -19,6 +19,7 @@ Pip (para instalação de pacotes Python)
 _Rodando localmente
 1. Clone o repositório:
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
+
 cd bioinfo_pipeline
 
 2. Crie um ambiente virtual (opcional, mas recomendado):
