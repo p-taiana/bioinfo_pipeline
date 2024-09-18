@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     git \
-    zlib1g-dev
+    zlib1g-dev \
+    libdbi-perl \
+    libdbd-mysql-perl
 
 # Baixar e instalar o VEP
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
