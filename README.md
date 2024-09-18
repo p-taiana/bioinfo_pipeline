@@ -16,21 +16,24 @@ Python >3.x
 Docker (se preferir rodar o projeto em contêiner)
 Pip (para instalação de pacotes Python)
 
+conda install -n base -c conda-forge mamba \
+    && mamba create -n bioinfo-env -c bioconda -c conda-forge snakemake snpeff snpsift flask matplotlib pandas
+
 _Rodando localmente
 1. Clone o repositório:
-git clone https://github.com/p-taiana/bioinfo_pipeline.git
+git clone https://github.com/p-taiana/bioinfo_pipeline.git;
 
 cd bioinfo_pipeline
 
 2. Crie um ambiente virtual (opcional, mas recomendado):
-python3 -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
+python3 -m venv venv;
+source venv/bin/activate;  # No Windows: venv\Scripts\activate
 
 3. Instale as dependências:
-pip install -r requirements.txt
+pip install -r requirements.txt;
 
 5. Execute a aplicação Flask:
-python app.py
+python app.py;
 
 7. Abra seu navegador e acesse:
 http://127.0.0.1:5000
