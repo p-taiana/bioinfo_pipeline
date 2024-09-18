@@ -19,20 +19,23 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libdbi-perl \
     libdbd-mysql-perl \
+    libdbd-sqlite3-perl \
     cpanminus \
     make \
     libssl-dev \
     libexpat1-dev \
-    libdbd-sqlite3-perl \
     libxml-simple-perl
 
-# Instalar DBI e outros módulos Perl que podem ser necessários para o VEP via cpanminus
-RUN cpanm --notest DBD::SQLite Archive::Zip
+# Reinstalar o DBI com cpanminus forçado (resolve inconsistências com DBI)
+RUN cpanm --force DBI DBD::SQLite Archive::Zip
 
-# Baixar e instalar o VEP
+# Instalar outros módulos Perl que podem ser necessários para o VEP via cpanminus
+RUN cpanm --notest XML::Simple JSON::PP
+
+# Baixar e instalar o VEP (com a flag --NO_UPDATE para evitar o download de novos dados)
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
     cd ensembl-vep && \
-    perl INSTALL.pl -a a -s homo_sapiens -y GRCh37 --CONVERT --NO_UPDATE
+    perl INSTALL.pl -a a -s homo_sapiens -y GRCh37 --NO_UPDATE --CONVERT
 
 # Definir o diretório de trabalho
 WORKDIR /app
