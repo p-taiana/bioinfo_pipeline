@@ -24,8 +24,11 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libexpat1-dev
 
-# Instalar o módulo DBI via cpanm
-RUN cpanm --force DBI
+# Instalar o DBI com CPAN e garantir que a instalação seja completa
+RUN cpan App::cpanminus && cpanm --force DBI
+
+# Instalar outros módulos Perl que podem ser necessários para o VEP
+RUN cpanm --force DBD::mysql Archive::Zip
 
 # Baixar e instalar o VEP
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
