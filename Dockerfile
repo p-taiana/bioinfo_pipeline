@@ -18,7 +18,11 @@ RUN apt-get update && apt-get install -y \
     git \
     zlib1g-dev \
     libdbi-perl \
-    libdbd-mysql-perl
+    libdbd-mysql-perl \
+    cpanminus  # Adicionando cpanminus para instalar módulos Perl
+
+# Instalar o módulo DBI via cpanm
+RUN cpanm DBI
 
 # Baixar e instalar o VEP
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
