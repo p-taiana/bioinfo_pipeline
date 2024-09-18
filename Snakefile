@@ -1,14 +1,15 @@
 rule all:
     input:
-        "variants_with_dbsnp.vcf"
+        "variants_with_gnomad.vcf"
 
-rule annotate_dbsnp:
+rule annotate_with_vep:
     input:
-        "input_variants.vcf"
+        "annotated_variants.vcf"
     output:
-        "variants_with_dbsnp.vcf"
+        "variants_with_gnomad.vcf"
     shell:
         """
-        # Usar o VEP para anotar com dbSNP IDs
-        vep --input_file {input} --output_file {output} --everything --vcf --offline
+        vep --input_file {input} --output_file {output} --cache --offline --assembly GRCh37 \
+            --plugin gnomAD,/path/to/gnomad/data.gz --format vcf --vcf --symbol --tsl --hgvs \
+            --fasta /path/to/human_g1k_v37.fasta --species homo_sapiens --everything
         """
