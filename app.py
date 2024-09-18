@@ -1,25 +1,7 @@
 import re
-import requests
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
-
-# Função para consultar a API do Ensembl VEP e obter anotações de variantes
-def annotate_variant_with_vep(chrom, pos, ref, alt):
-    url = "https://rest.ensembl.org/vep/human/region"
-    headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
-    
-    # Preparar a variante no formato esperado
-    variant_data = {
-        "variants": [f"{chrom}:{pos}_{ref}/{alt}"]
-    }
-    
-    response = requests.post(url, headers=headers, json=variant_data)
-    
-    if response.status_code == 200:
-        return response.json()  # Retorna as anotações da variante
-    else:
-        return None
 
 # Função para filtrar variantes com base nos thresholds de AF e DP
 def filter_variants(variants, freq_threshold, dp_threshold):
@@ -28,26 +10,20 @@ def filter_variants(variants, freq_threshold, dp_threshold):
         if variant.startswith("#"):
             continue  # Ignora as linhas de cabeçalho
 
-        # Extrair informações da linha VCF
-        variant_data = variant.strip().split("\t")
-        chrom, pos, ref, alt = variant_data[0], variant_data[1], variant_data[3], variant_data[4]
-        
-        # Chamar a API do Ensembl VEP para obter anotações
-        annotation = annotate_variant_with_vep(chrom, pos, ref, alt)
-        
-        if annotation:
-            info_field = annotation[0]['transcript_consequences'][0] if 'transcript_consequences' in annotation[0] else None
-            snp_id = annotation[0].get('id', 'N/A')  # SNP ID
-            gnomad_freq = float(info_field.get('gnomad_AF', 0.0)) if info_field else 0.0  # Frequência do gnomAD
-            dp = int(variant_data[5])  # Usamos a profundidade da coluna DP do VCF
+        # Regex para extrair a frequência (AF) e profundidade (DP) do campo INFO
+        match_freq = re.search(r'AF=([\d\.]+)', variant)
+        match_dp = re.search(r'DP=(\d+)', variant)
+
+        if match_freq and match_dp:
+            freq = float(match_freq.group(1))
+            dp = int(match_dp.group(1))
 
             # Aplica os filtros de frequência e DP
-            if gnomad_freq >= freq_threshold and dp >= dp_threshold:
+            if freq >= freq_threshold and dp >= dp_threshold:
+                # Adiciona o variant como dicionário JSON estruturado
                 variant_info = {
-                    "variant": pos,  # A posição da variante
-                    "snp_id": snp_id,  # SNP ID
-                    "gnomad_AF": gnomad_freq,  # Frequência do gnomAD
-                    "info": f"Chrom: {chrom}, Pos: {pos}, Ref: {ref}, Alt: {alt}, gnomAD_AF: {gnomad_freq}, DP: {dp}"  # Todas as informações da variante
+                    "variant": variant.split("\t")[2],  # A posição da variante é a terceira coluna (ajustar conforme a posição real)
+                    "info": variant.strip()  # Todas as informações da variante
                 }
                 filtered_variants.append(variant_info)
 
@@ -56,13 +32,12 @@ def filter_variants(variants, freq_threshold, dp_threshold):
 # Rota para renderizar o frontend
 @app.route('/variants')
 def variants():
-    return render_template('variants.html')  # Renderiza o HTML
+    return render_template('variants.html')  # Isso deve renderizar o HTML
 
 # Rota para carregar e filtrar o arquivo VCF via API
 @app.route('/api/variants', methods=['GET'])
 def get_variants():
-    vcf_file = './input_variants.vcf'  # Arquivo de variantes sem anotações (apenas com variantes básicas)
-    
+    vcf_file = './annotated_variants.vcf'
     try:
         # Parâmetros de filtragem da URL
         freq_threshold = float(request.args.get('freq', 0.0))  # Exemplo: ?freq=0.05
@@ -81,4 +56,4 @@ def get_variants():
         return str(e), 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
