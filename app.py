@@ -18,8 +18,8 @@ def filter_variants(variants, af_threshold, dp_threshold):
             dp = int(match_dp.group(1))
             if af >= af_threshold and dp >= dp_threshold:
                 filtered_variants.append({
-                    "variant": variant.split('\t')[1],  # Assume que a posição da variante está na segunda coluna
-                    "info": variant
+                    "position": variant.split('\t')[1],  # Assume que a posição da variante está na segunda coluna
+                    "info": variant.strip()
                 })
 
     return filtered_variants
@@ -35,9 +35,34 @@ def filter_and_plot():
 
         filtered_variants = filter_variants(variants, af_threshold, dp_threshold)
 
-        # Assume que você tem funções para gerar gráficos, se necessário
+        # Gerar gráficos
+        af_values = [float(v['info'].split(';')[3].split('=')[1]) for v in filtered_variants]  # Adapte conforme o formato do seu VCF
+        dp_values = [int(v['info'].split(';')[4].split('=')[1]) for v in filtered_variants]  # Adapte conforme o formato do seu VCF
 
-        return jsonify(filtered_variants)
+        plt.figure()
+        plt.hist(af_values, bins=10, alpha=0.7)
+        plt.title('Distribuição de AF')
+        plt.xlabel('Allele Frequency (AF)')
+        plt.ylabel('Count')
+        af_path = 'static/af_plot.png'
+        plt.savefig(af_path)
+        plt.close()
+
+        plt.figure()
+        plt.hist(dp_values, bins=10, alpha=0.7)
+        plt.title('Distribuição de DP')
+        plt.xlabel('Depth of Coverage (DP)')
+        plt.ylabel('Count')
+        dp_path = 'static/dp_plot.png'
+        plt.savefig(dp_path)
+        plt.close()
+
+        # Enviar dados filtrados e caminhos de gráficos
+        return jsonify({
+            "variants": filtered_variants,
+            "af_plot": url_for('static', filename='af_plot.png'),
+            "dp_plot": url_for('static', filename='dp_plot.png')
+        })
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
