@@ -9,6 +9,10 @@ RUN mamba create -n bioinfo-env -c bioconda -c conda-forge snakemake snpeff flas
 # Ativar o ambiente Conda
 ENV PATH /opt/conda/envs/bioinfo-env/bin:$PATH
 
+# Atualizar o Perl e instalar o módulo Compress::Raw::Zlib versão 2.201
+RUN apt-get update && apt-get install -y build-essential \
+    && cpan install Compress::Raw::Zlib
+
 # Definir o diretório de trabalho
 WORKDIR /app
 
