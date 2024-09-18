@@ -19,15 +19,18 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libdbi-perl \
     libdbd-mysql-perl \
-    cpanminus  # Adicionando cpanminus para instalar módulos Perl
+    cpanminus \
+    make \
+    libssl-dev \
+    libexpat1-dev
 
 # Instalar o módulo DBI via cpanm
-RUN cpanm DBI
+RUN cpanm --force DBI
 
 # Baixar e instalar o VEP
 RUN git clone https://github.com/Ensembl/ensembl-vep.git && \
     cd ensembl-vep && \
-    perl INSTALL.pl -a a -s homo_sapiens -y GRCh37
+    perl INSTALL.pl -a a -s homo_sapiens -y GRCh37 --CONVERT --NO_UPDATE
 
 # Definir o diretório de trabalho
 WORKDIR /app
