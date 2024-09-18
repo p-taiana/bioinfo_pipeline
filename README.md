@@ -55,16 +55,6 @@ Como Usar
 3. Visualize os resultados: As variantes filtradas serão exibidas em uma tabela com informações detalhadas.
 4. Visualize os gráficos: Gráficos de distribuição para AF e DP são gerados automaticamente com base nos resultados.
 
-Estrutura do Projeto
-
-/bioinfo_pipeline
-│
-├── app.py                    # Aplicação Flask principal
-├── requirements.txt           # Dependências do projeto
-├── Dockerfile                 # Arquivo para construção da imagem Docker
-├── README.md                  # Documentação do projeto
-├── /templates                 # Templates HTML usados pela aplicação Flask
-│   └── variants.html          # Página web para filtragem e visualização
 
 Contribuição
 Se você quiser contribuir para este projeto:
