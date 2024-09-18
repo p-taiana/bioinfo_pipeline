@@ -32,7 +32,7 @@ pip install -r requirements.txt
 python app.py
 
 7. Abra seu navegador e acesse:
-http://127.0.0.1:5000/variants#
+http://127.0.0.1:5000
 
 _Rodando com Docker
 1. Clone o repositório:
