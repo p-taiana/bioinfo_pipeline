@@ -12,11 +12,11 @@
         <form id="filter-form">
             <div class="form-group">
                 <label for="freq">Frequência (AF):</label>
-                <input type="text" class="form-control" id="freq" placeholder="Ex: 0.05">
+                <input type="text" class="form-control" id="freq" name="af" placeholder="Ex: 0.05">
             </div>
             <div class="form-group">
                 <label for="dp">Profundidade (DP):</label>
-                <input type="text" class="form-control" id="dp" placeholder="Ex: 100">
+                <input type="text" class="form-control" id="dp" name="dp" placeholder="Ex: 100">
             </div>
             <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
         </form>
@@ -38,27 +38,24 @@
         document.getElementById('filter-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            const freq = document.getElementById('freq').value;
+            const af = document.getElementById('freq').value;
             const dp = document.getElementById('dp').value;
             
-            // Fazendo a requisição para o backend na API
-            fetch(`/api/variants?freq=${freq}&dp=${dp}`)
+            fetch(`/api/variants?af=${af}&dp=${dp}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Limpando a tabela
                     const tableBody = document.getElementById('variant-table-body');
                     tableBody.innerHTML = '';
 
-                    // Preenchendo a tabela com as variantes filtradas
                     data.forEach(variant => {
                         const row = document.createElement('tr');
                         row.innerHTML = 
                             `<td>${variant.variant}</td>
-                            <td>${variant.info}</td>`;
+                             <td>${variant.info}</td>`;
                         tableBody.appendChild(row);
                     });
                 })
-                .catch(error => console.error('Erro ao filtrar as variantes:', error));
+                .catch(error => console.error('Error fetching data:', error));
         });
     </script>
 </body>
