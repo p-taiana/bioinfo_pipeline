@@ -1,18 +1,5 @@
 Este projeto é um pipeline de bioinformática que utiliza Flask para fornecer uma interface web interativa para filtrar variantes genéticas por frequência alélica (AF) e profundidade (DP). Ele permite que os usuários carreguem arquivos VCF (Variant Call Format) e façam filtragens específicas diretamente pela web. O projeto também é containerizado com Docker para facilitar a implementação em diferentes ambientes.
 
-Índice
-Sobre o Projeto
-Funcionalidades
-Instalação
-Pré-requisitos
-Rodando localmente
-Rodando com Docker
-Como Usar
-Estrutura do Projeto
-Contribuição
-Licença
-Contato
-
 Sobre o Projeto
 A pipeline foi criado para facilitar a análise de variantes genéticas filtrando-as por frequência alélica mínima (AF) e profundidade de cobertura mínima (DP). O projeto usa Flask para a construção da API e da interface web, e Docker para a fácil configuração e execução do pipeline em diferentes ambientes. Isso torna o projeto replicável e portável para diferentes plataformas sem a necessidade de configuração manual complexa.
 
@@ -31,7 +18,9 @@ Pip (para instalação de pacotes Python)
 
 1. Rodando localmente
 Clone o repositório:
+
 git clone https://github.com/p-taiana/bioinfo_pipeline.git
+
 cd bioinfo_pipeline
 
 2. Crie um ambiente virtual (opcional, mas recomendado):
@@ -41,10 +30,10 @@ source venv/bin/activate  # No Windows: venv\Scripts\activate
 3. Instale as dependências:
 pip install -r requirements.txt
 
-4. Execute a aplicação Flask:
+5. Execute a aplicação Flask:
 python app.py
 
-5. Abra seu navegador e acesse:
+7. Abra seu navegador e acesse:
 http://127.0.0.1:5000/variants#
 
 Rodando com Docker
@@ -60,7 +49,7 @@ docker build -t bioinfo_pipeline .
 docker run -p 5000:5000 bioinfo_pipeline
 
 4. Abra seu navegador e acesse:
-http://127.0.0.1:5000/variants#
+http://127.0.0.1:5000
 
 
 Como Usar
