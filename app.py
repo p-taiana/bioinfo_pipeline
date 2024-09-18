@@ -37,17 +37,19 @@ def filter_variants(variants, freq_threshold, dp_threshold):
         
         if annotation:
             info_field = annotation[0]['transcript_consequences'][0] if 'transcript_consequences' in annotation[0] else None
-            if info_field:
-                freq = float(info_field.get('gnomad_AF', 0.0))  # Frequência do gnomAD
-                dp = int(variant_data[5])  # Usamos a profundidade da coluna DP do VCF
+            snp_id = annotation[0].get('id', 'N/A')  # SNP ID
+            gnomad_freq = float(info_field.get('gnomad_AF', 0.0)) if info_field else 0.0  # Frequência do gnomAD
+            dp = int(variant_data[5])  # Usamos a profundidade da coluna DP do VCF
 
-                # Aplica os filtros de frequência e DP
-                if freq >= freq_threshold and dp >= dp_threshold:
-                    variant_info = {
-                        "variant": pos,  # A posição da variante
-                        "info": f"Chrom: {chrom}, Pos: {pos}, Ref: {ref}, Alt: {alt}, gnomAD_AF: {freq}, DP: {dp}"  # Todas as informações da variante
-                    }
-                    filtered_variants.append(variant_info)
+            # Aplica os filtros de frequência e DP
+            if gnomad_freq >= freq_threshold and dp >= dp_threshold:
+                variant_info = {
+                    "variant": pos,  # A posição da variante
+                    "snp_id": snp_id,  # SNP ID
+                    "gnomad_AF": gnomad_freq,  # Frequência do gnomAD
+                    "info": f"Chrom: {chrom}, Pos: {pos}, Ref: {ref}, Alt: {alt}, gnomAD_AF: {gnomad_freq}, DP: {dp}"  # Todas as informações da variante
+                }
+                filtered_variants.append(variant_info)
 
     return filtered_variants
 
