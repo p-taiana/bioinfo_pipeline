@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, render_template
 import re
-import os
 
 app = Flask(__name__)
 
@@ -18,13 +17,15 @@ def filter_variants(variants, freq_threshold, dp_threshold):
         if variant.startswith("#"):
             continue
 
-        match_freq = re.search(r'AF=([\d\.]+)', variant)  # Ajuste conforme o formato de frequência no VCF
+        # Extraindo frequência e profundidade
+        match_freq = re.search(r'AF=([\d\.]+)', variant)
         match_dp = re.search(r'DP=(\d+)', variant)
 
         if match_freq and match_dp:
             freq = float(match_freq.group(1))
             dp = int(match_dp.group(1))
 
+            # Verifica se passa o filtro
             if freq >= freq_threshold and dp >= dp_threshold:
                 variant_info = {
                     "variant": variant.split("\t")[1],  # Posição da variante
@@ -36,7 +37,7 @@ def filter_variants(variants, freq_threshold, dp_threshold):
 
 @app.route('/api/variants', methods=['GET'])
 def get_variants():
-    vcf_file = './variants_with_frequencies.vcf'
+    vcf_file = './variants_with_dbsnp.vcf'
     try:
         freq_threshold = float(request.args.get('freq', 0.0))
         dp_threshold = int(request.args.get('dp', 0))
