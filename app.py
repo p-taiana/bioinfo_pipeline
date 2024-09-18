@@ -17,48 +17,34 @@ def filter_variants(variants, af_threshold, dp_threshold):
             af = float(match_af.group(1))
             dp = int(match_dp.group(1))
             if af >= af_threshold and dp >= dp_threshold:
-                filtered_variants.append(variant)
+                filtered_variants.append({
+                    "variant": variant.split('\t')[1],  # Assume que a posição da variante está na segunda coluna
+                    "info": variant
+                })
 
     return filtered_variants
 
-@app.route('/filter', methods=['GET', 'POST'])
+@app.route('/api/variants', methods=['GET'])
 def filter_and_plot():
-    if request.method == 'POST':
-        af_threshold = float(request.form.get('af', 0.0))
-        dp_threshold = int(request.form.get('dp', 0))
+    af_threshold = float(request.args.get('af', 0.0))
+    dp_threshold = int(request.args.get('dp', 0))
 
-        try:
-            with open('annotated_variants.vcf', 'r') as file:
-                variants = file.readlines()
+    try:
+        with open('annotated_variants.vcf', 'r') as file:
+            variants = file.readlines()
 
-            filtered_variants = filter_variants(variants, af_threshold, dp_threshold)
-            af_values = [float(re.search(r'AF=([\d\.]+)', v).group(1)) for v in filtered_variants if re.search(r'AF=([\d\.]+)', v)]
-            dp_values = [int(re.search(r'DP=(\d+)', v).group(1)) for v in filtered_variants if re.search(r'DP=(\d+)', v)]
+        filtered_variants = filter_variants(variants, af_threshold, dp_threshold)
 
-            plt.figure()
-            plt.hist(af_values, bins=10, alpha=0.7, label='AF')
-            plt.title('Distribuição de AF')
-            plt.xlabel('AF')
-            plt.ylabel('Frequência')
-            af_path = 'static/af_plot.png'
-            plt.savefig(af_path)
-            plt.close()
+        # Assume que você tem funções para gerar gráficos, se necessário
 
-            plt.figure()
-            plt.hist(dp_values, bins=10, alpha=0.7, label='DP')
-            plt.title('Distribuição de DP')
-            plt.xlabel('DP')
-            plt.ylabel('Frequência')
-            dp_path = 'static/dp_plot.png'
-            plt.savefig(dp_path)
-            plt.close()
+        return jsonify(filtered_variants)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-            return render_template('results.html', af_image=url_for('static', filename='af_plot.png'), dp_image=url_for('static', filename='dp_plot.png'), num_variants=len(filtered_variants))
-        
-        except Exception as e:
-            return str(e), 500
-    else:
-        return render_template('index.html')
+@app.route('/')
+def index():
+    return render_template('variants.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
