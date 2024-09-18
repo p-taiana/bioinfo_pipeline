@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 app = Flask(__name__)
 
 def filter_variants(variants, af_threshold, dp_threshold):
-    filtered_variants = []
+    af_count = 0
+    dp_count = 0
     for variant in variants:
         if variant.startswith("#"):
             continue
@@ -16,16 +17,15 @@ def filter_variants(variants, af_threshold, dp_threshold):
         if match_af and match_dp:
             af = float(match_af.group(1))
             dp = int(match_dp.group(1))
-            if af >= af_threshold and dp >= dp_threshold:
-                filtered_variants.append({
-                    "position": variant.split('\t')[1],  # Assume que a posição da variante está na segunda coluna
-                    "info": variant.strip()
-                })
+            if af >= af_threshold:
+                af_count += 1
+            if dp >= dp_threshold:
+                dp_count += 1
 
-    return filtered_variants
+    return af_count, dp_count
 
 @app.route('/api/variants', methods=['GET'])
-def filter_and_plot():
+def api_filter():
     af_threshold = float(request.args.get('af', 0.0))
     dp_threshold = int(request.args.get('dp', 0))
 
@@ -33,36 +33,22 @@ def filter_and_plot():
         with open('annotated_variants.vcf', 'r') as file:
             variants = file.readlines()
 
-        filtered_variants = filter_variants(variants, af_threshold, dp_threshold)
+        af_count, dp_count = filter_variants(variants, af_threshold, dp_threshold)
 
-        # Gerar gráficos
-        af_values = [float(v['info'].split(';')[3].split('=')[1]) for v in filtered_variants]  # Adapte conforme o formato do seu VCF
-        dp_values = [int(v['info'].split(';')[4].split('=')[1]) for v in filtered_variants]  # Adapte conforme o formato do seu VCF
-
+        # Generate simple bar charts
         plt.figure()
-        plt.hist(af_values, bins=10, alpha=0.7)
-        plt.title('Distribuição de AF')
-        plt.xlabel('Allele Frequency (AF)')
-        plt.ylabel('Count')
-        af_path = 'static/af_plot.png'
-        plt.savefig(af_path)
+        plt.bar(['AF'], [af_count], color='blue')
+        plt.title('Variantes por AF')
+        plt.savefig('static/af_count.png')
         plt.close()
 
         plt.figure()
-        plt.hist(dp_values, bins=10, alpha=0.7)
-        plt.title('Distribuição de DP')
-        plt.xlabel('Depth of Coverage (DP)')
-        plt.ylabel('Count')
-        dp_path = 'static/dp_plot.png'
-        plt.savefig(dp_path)
+        plt.bar(['DP'], [dp_count], color='red')
+        plt.title('Variantes por DP')
+        plt.savefig('static/dp_count.png')
         plt.close()
 
-        # Enviar dados filtrados e caminhos de gráficos
-        return jsonify({
-            "variants": filtered_variants,
-            "af_plot": url_for('static', filename='af_plot.png'),
-            "dp_plot": url_for('static', filename='dp_plot.png')
-        })
+        return jsonify({"af_plot": url_for('static', filename='af_count.png'), "dp_plot": url_for('static', filename='dp_count.png')})
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
