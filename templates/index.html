@@ -3,90 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Variants Pagination</title>
-    <style>
-        .pagination {
-            display: inline-block;
-        }
-        .pagination a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
-        }
-        .pagination a.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .pagination a:hover:not(.active) {
-            background-color: #ddd;
-        }
-    </style>
+    <title>Filtrar Variantes</title>
 </head>
 <body>
-    <h2>Filtered Variants</h2>
-    <div id="variant-list"></div>
-    <div class="pagination" id="pagination"></div>
+    <h2>Filtros</h2>
+    <form id="filter-form">
+        <label for="af">Frequência Alélica (AF >=):</label>
+        <input type="text" id="af" name="af" value="0.05"><br>
+        <label for="dp">Profundidade (DP >=):</label>
+        <input type="text" id="dp" name="dp" value="100"><br>
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <h2>Resultados</h2>
+    <p id="num-variants"></p>
+    <img id="af-plot" src="" alt="Gráfico de AF">
+    <img id="dp-plot" src="" alt="Gráfico de DP">
 
     <script>
-        let currentPage = 1;
-        const perPage = 10; // Number of items per page
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const af = document.getElementById('af').value;
+            const dp = document.getElementById('dp').value;
 
-        function loadVariants(page) {
-            fetch(http://127.0.0.1:5000/variants?freq=0.05&dp=100&page=${page}&per_page=${perPage})
+            fetch(`/api/filter?af=${af}&dp=${dp}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Render variants
-                    const variantList = document.getElementById('variant-list');
-                    variantList.innerHTML = '';
-                    data.variants.forEach(variant => {
-                        const variantItem = document.createElement('div');
-                        variantItem.textContent = ${variant.variant} - ${variant.info};
-                        variantList.appendChild(variantItem);
-                    });
-
-                    // Render pagination
-                    const pagination = document.getElementById('pagination');
-                    pagination.innerHTML = '';
-
-                    // Add previous page button
-                    if (data.page > 1) {
-                        const prevPage = document.createElement('a');
-                        prevPage.textContent = '«';
-                        prevPage.href = '#';
-                        prevPage.onclick = () => loadVariants(data.page - 1);
-                        pagination.appendChild(prevPage);
-                    }
-
-                    // Add page numbers
-                    for (let i = 1; i <= data.total_pages; i++) {
-                        const pageLink = document.createElement('a');
-                        pageLink.textContent = i;
-                        pageLink.href = '#';
-                        pageLink.onclick = () => loadVariants(i);
-
-                        if (i === data.page) {
-                            pageLink.classList.add('active');
-                        }
-
-                        pagination.appendChild(pageLink);
-                    }
-
-                    // Add next page button
-                    if (data.page < data.total_pages) {
-                        const nextPage = document.createElement('a');
-                        nextPage.textContent = '»';
-                        nextPage.href = '#';
-                        nextPage.onclick = () => loadVariants(data.page + 1);
-                        pagination.appendChild(nextPage);
-                    }
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        // Load initial page
-        loadVariants(currentPage);
+                    document.getElementById('num-variants').innerText = `Número de Variantes Filtradas: ${data.num_variants}`;
+                    document.getElementById('af-plot').src = data.af_plot;
+                    document.getElementById('dp-plot').src = data.dp_plot;
+                });
+        });
     </script>
 </body>
 </html>
-
